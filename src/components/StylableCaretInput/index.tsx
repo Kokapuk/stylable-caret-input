@@ -1,17 +1,39 @@
-import { useImperativeHandle, useRef, type DetailedHTMLProps, type InputHTMLAttributes } from 'react';
+import {
+  useImperativeHandle,
+  useRef,
+  type CSSProperties,
+  type DetailedHTMLProps,
+  type InputHTMLAttributes,
+} from 'react';
 import styles from './StylableCaretInput.module.css';
 
 type NativeProps = DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>;
 
+export type StylableCaretInputProps = Omit<NativeProps, 'type'> & {
+  type: Extract<NativeProps['type'], 'text' | 'search' | 'url' | 'tel' | 'password'>;
+  caretClass?: string;
+  caretStyle?: CSSProperties;
+  caretOffset?: { x?: string; y?: string };
+};
+
 const EVENT_TRIGGER_PROPS = [
   'onClick',
+  'onFocus',
   'onKeyDown',
   'onSelect',
   'onScroll',
   'onBlur',
 ] as const satisfies readonly (keyof NativeProps)[];
 
-export default function StylableCaretInput({ className, style, ref, ...props }: NativeProps) {
+export default function StylableCaretInput({
+  caretClass,
+  caretStyle,
+  caretOffset,
+  className,
+  style,
+  ref,
+  ...props
+}: StylableCaretInputProps) {
   const wrapper = useRef<HTMLDivElement>(null);
   const input = useRef<HTMLInputElement>(null);
   const measurementField = useRef<HTMLPreElement>(null);
@@ -38,10 +60,11 @@ export default function StylableCaretInput({ className, style, ref, ...props }: 
     }
 
     const wrapperComputedStyle = window.getComputedStyle(wrapper.current);
+    measurementField.current.textContent = input.current.value.slice(0, input.current.selectionStart ?? 0);
 
-    measurementField.current.textContent = input.current.value.toString().slice(0, input.current.selectionStart ?? 0);
     const measurementFieldRect = measurementField.current.getBoundingClientRect();
     const caretRect = caret.current.getBoundingClientRect();
+    const wrapperRect = wrapper.current.getBoundingClientRect();
 
     caret.current.style.transform = `
         translateX(calc(
@@ -49,11 +72,20 @@ export default function StylableCaretInput({ className, style, ref, ...props }: 
           ${wrapperComputedStyle.getPropertyValue('border-left-width')} +
           ${measurementFieldRect.width}px -
           ${input.current.scrollLeft}px -
-          ${caretRect.width}px
+          ${caretRect.width / 2}px + 
+          ${caretOffset?.x ?? '0px'}
         ))
         translateY(calc(
           ${wrapperComputedStyle.getPropertyValue('padding-top')} + 
-          ${wrapperComputedStyle.getPropertyValue('border-top-width')}))`;
+          ${wrapperComputedStyle.getPropertyValue('border-top-width')} +
+          ((${wrapperRect.height}px - 
+            ${wrapperComputedStyle.getPropertyValue('padding-top')} - 
+            ${wrapperComputedStyle.getPropertyValue('border-top-width')} -
+            ${wrapperComputedStyle.getPropertyValue('padding-bottom')} - 
+            ${wrapperComputedStyle.getPropertyValue('border-bottom-width')}
+          ) / 2 - .55em) +
+          ${caretOffset?.y ?? '0px'}
+        ))`;
 
     caret.current.getAnimations().forEach((animation) => {
       animation.currentTime = 0;
@@ -87,12 +119,15 @@ export default function StylableCaretInput({ className, style, ref, ...props }: 
   };
 
   return (
-    <div ref={wrapper} className={[styles.wrapper, className].filter(Boolean).join(' ')} style={style}>
+    <div
+      ref={wrapper}
+      className={[styles.wrapper, className].filter(Boolean).join(' ')}
+      onClick={() => input.current?.focus()}
+      style={style}
+    >
       <input ref={input} {...props} {...getUpdateTriggers()} />
-      <div ref={caret} className={styles.caret} inert />
-      <pre ref={measurementField} className={styles.measurementField}>
-        {/* {internalValue.toString().slice(0, selectionStart)} */}
-      </pre>
+      <div ref={caret} className={[styles.caret, caretClass].filter(Boolean).join(' ')} style={caretStyle} inert />
+      <pre ref={measurementField} className={styles.measurementField} />
     </div>
   );
 }
