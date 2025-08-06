@@ -4,6 +4,11 @@
   cursor: text;
   overflow: hidden;
 
+  &,
+  & * {
+    box-sizing: border-box;
+  }
+
   input {
     padding: 0;
     outline: 0;
