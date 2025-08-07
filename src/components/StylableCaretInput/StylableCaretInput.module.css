@@ -3,21 +3,23 @@
   position: relative;
   cursor: text;
   overflow: hidden;
+  letter-spacing: normal;
 
   &,
   & * {
-    box-sizing: border-box;
+    box-sizing: border-box !important;
   }
 
   input {
-    padding: 0;
-    outline: 0;
-    border: 0;
-    font: inherit;
-    color: currentColor;
-    width: 100%;
-    height: 100%;
-    caret-color: transparent;
+    padding: 0 !important;
+    outline: 0 !important;
+    border: 0 !important;
+    color: currentColor !important;
+    font: inherit !important;
+    letter-spacing: inherit !important;
+    width: 100% !important;
+    height: 100% !important;
+    caret-color: transparent !important;
   }
 
   .caret {
@@ -33,10 +35,12 @@
   }
 
   .measurementField {
-    font-family: inherit;
-    width: fit-content;
-    visibility: hidden;
-    position: absolute;
+    font: inherit !important;
+    width: fit-content !important;
+    visibility: hidden !important;
+    position: absolute !important;
+    letter-spacing: inherit !important;
+    margin: 0 !important;
   }
 }
 
