@@ -46,7 +46,11 @@ export default function StylableCaretInput({
       return;
     }
 
-    if (document.activeElement !== input.current || input.current.selectionStart !== input.current.selectionEnd) {
+    if (
+      document.activeElement !== input.current ||
+      input.current.selectionStart !== input.current.selectionEnd ||
+      !document.hasFocus()
+    ) {
       caret.current.style.visibility = 'hidden';
 
       caret.current.getAnimations().forEach((animation) => {
@@ -83,7 +87,7 @@ export default function StylableCaretInput({
             ${wrapperComputedStyle.getPropertyValue('border-top-width')} -
             ${wrapperComputedStyle.getPropertyValue('padding-bottom')} - 
             ${wrapperComputedStyle.getPropertyValue('border-bottom-width')}
-          ) / 2 - .55em) +
+          ) / 2 - ${caretRect.height / 2}px) +
           ${caretOffset?.y ?? '0px'}
         ))`;
 

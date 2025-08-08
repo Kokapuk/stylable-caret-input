@@ -20,6 +20,7 @@
     width: 100% !important;
     height: 100% !important;
     caret-color: transparent !important;
+    background-color: transparent !important;
   }
 
   .caret {

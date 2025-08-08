@@ -10,7 +10,7 @@ export default function App() {
           border: '1px solid black',
           padding: '7px 5px 25px 5px',
           height: 250,
-          fontSize: '18px',
+          fontSize: '24px',
           lineHeight: '35px',
         }}
       />
@@ -19,14 +19,23 @@ export default function App() {
         style={{
           border: '1px solid black',
           padding: '5px 7px',
-          fontSize: '18px',
+          fontSize: '24px',
         }}
       />
       <StylableCaretInput
         type="text"
         style={{
+          border: '1px solid black',
+          padding: '5px 7px',
+          fontSize: '24px',
+        }}
+        caretStyle={{ height: 32 }}
+      />
+      <StylableCaretInput
+        type="text"
+        style={{
           outline: '1px solid black',
-          fontSize: '18px',
+          fontSize: '24px',
         }}
       />
     </div>
